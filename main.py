@@ -12,7 +12,7 @@ if __name__ == '__main__':
     batch_size = 100
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    train_data, test_data, syn_data = MNIST(_type='train', batch_size=batch_size)
+    train_data, test_data, syn_data = MNIST()
     #syn_loader = MNIST(_type='syn', batch_size=batch_size)
 
     model = CNN().to(device)    
@@ -64,11 +64,12 @@ if __name__ == '__main__':
             x_syn = x_syn - np.array(x_train.grad)
             x_train.detach()
         
-        if (epoch + 1) % 10 == 0:
+        if epoch == 0 or (epoch + 1) % 10 == 0:
             print('[Epoch: {:>4}] cost = {:>.9}'.format(epoch, avg_loss))
             with open(f"./result/test_epoch_{epoch+1}.pkl","wb") as f:
                 pickle.dump(X_syn[0], f)
-
+    with open(f"./result/test_last.pkl","wb") as f:
+        pickle.dump(X_syn, f)
 
     model.eval()
     accuracy = 0
